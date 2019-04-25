@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"
+      integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+      crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <a href="#" id="load_posts">Refresh</a>
+    </div>
+    <div id="content"></div>
+</body>
+
+<script>
+    function removeElements() {
+        $('.post_item').remove();
+    }
+
+    function loadContent() {
+        $.get('/load_content', function (data) {
+            displayPosts(data);
+        });
+    }
+
+    function displayPosts(data) {
+        posts = $.parseJSON(data);
+        posts.forEach(function (post, i, posts) {
+            $('#content').append('<div class="post_item" id="post' + i + '"></div>');
+            $('#post' + i).append('<p class="text">' + post.text + '</p>');
+            $('#post' + i).append('<div class="img-container" id="img-container' + i + '"></div>');
+            images = post.images;
+
+            images.forEach(function (image, j, images) {
+                $('#img-container' + i).append('<img src="' + image + '" style="width: 320px;" />');
+            });
+        });
+    }
+
+    $('#load_posts').click(function () {
+        console.log('Загрузка...');
+        removeElements();
+        loadContent();
+    });
+
+    $.get('/load_cached', function (data) {
+        removeElements();
+        displayPosts(data);
+    });
+</script>
+
+</html>
